@@ -189,18 +189,16 @@ class Mem0MCPServer {
         const vectorDbProvider = process.env.VECTOR_DB_PROVIDER;
         let vectorStoreConfig: any;
         if (vectorDbProvider === "qdrant") {
-          const host = process.env.VECTOR_DB_HOST;
-          const portStr = process.env.VECTOR_DB_PORT;
-          if (!host || !portStr) {
-            console.error("Error: VECTOR_DB_HOST and VECTOR_DB_PORT must be set when VECTOR_DB_PROVIDER=qdrant");
+          const url = process.env.VECTOR_DB_URL;
+          if (!url) {
+            console.error("Error: VECTOR_DB_URL must be set when VECTOR_DB_PROVIDER=qdrant");
             process.exit(1);
           }
-          const port = parseInt(portStr, 10);
           const collectionName = process.env.VECTOR_DB_COLLECTION_NAME || "memories";
           const apiKey = process.env.VECTOR_DB_API_KEY || undefined;
           vectorStoreConfig = {
             provider: "qdrant",
-            config: { collectionName, embeddingModelDims, host, port, apiKey }
+            config: { collectionName, embeddingModelDims, url, apiKey }
           };
         } else {
           const collectionName = process.env.VECTOR_DB_COLLECTION_NAME || "mem0_default_collection";
