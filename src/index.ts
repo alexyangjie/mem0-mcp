@@ -114,9 +114,9 @@ class Mem0MCPServer {
     // Initialize MCP Server
     this.server = new Server(
       {
-        // These should match package.json
-        name: "@pinkpixel/mem0-mcp",
-        version: "0.3.2",
+        // Updated to fork's name and version
+        name: "alexyangjie/mem0-mcp",
+        version: "0.3.3",
       },
       {
         capabilities: {
@@ -173,20 +173,50 @@ class Mem0MCPServer {
       this.isCloudMode = false;
 
       try {
-        // Initialize with silent options if available
-        this.localClient = new Memory({
-          vectorStore: {
-            provider: "memory",
-            config: {
-              collectionName: "mem0_default_collection"
-            }
+        // Configure embedder using OpenAI
+        const embedderConfig = {
+          provider: "openai",
+          config: {
+            apiKey: openaiApiKey!,
+            model: process.env.EMBEDDING_MODEL || "text-embedding-3-large"
           }
-          // Add silent options if supported by the mem0ai library
-          // Options like debug, silent, verbose don't exist in the type but might be supported at runtime
+        };
+
+        // Configure vector store based on environment variable
+        const vectorDbProvider = process.env.VECTOR_DB_PROVIDER;
+        let vectorStoreConfig: any;
+        if (vectorDbProvider === "qdrant") {
+          const host = process.env.VECTOR_DB_HOST;
+          const portStr = process.env.VECTOR_DB_PORT;
+          if (!host || !portStr) {
+            console.error("Error: VECTOR_DB_HOST and VECTOR_DB_PORT must be set when VECTOR_DB_PROVIDER=qdrant");
+            process.exit(1);
+          }
+          const port = parseInt(portStr, 10);
+          const collectionName = process.env.VECTOR_DB_COLLECTION_NAME || "memories";
+          // Default embedding dimensions for the OpenAI text-embedding-3-large model
+          const embeddingModelDims = 1536;
+          vectorStoreConfig = {
+            provider: "qdrant",
+            config: { collectionName, embeddingModelDims, host, port }
+          };
+          console.error("Using Qdrant vector store", { host, port, collectionName, embeddingModelDims });
+        } else {
+          const collectionName = process.env.VECTOR_DB_COLLECTION_NAME || "mem0_default_collection";
+          vectorStoreConfig = {
+            provider: "memory",
+            config: { collectionName }
+          };
+          console.error("Using in-memory vector store", { collectionName });
+        }
+
+        this.localClient = new Memory({
+          embedder: embedderConfig,
+          vectorStore: vectorStoreConfig
         });
-        console.error("Local client initialized successfully");
+        console.error("Local client initialized successfully with custom configuration");
         this.isReady = true;
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error initializing local client:", error);
         process.exit(1);
       }

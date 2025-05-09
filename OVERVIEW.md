@@ -1,13 +1,13 @@
 ![Mem0 Logo](https://res.cloudinary.com/di7ctlowx/image/upload/v1741739911/mem0-logo_dlssjm.svg)
 
-# @pinkpixel/mem0-mcp Project Overview ✨
+# alexyangjie/mem0-mcp Project Overview ✨
 
 **Current Version:** 0.3.0  
 **Last Updated:** 2025-04-20
 
 ## Project Summary
 
-`@pinkpixel/mem0-mcp` is a Model Context Protocol (MCP) server that integrates with [Mem0.ai](https://mem0.ai/) to provide persistent memory capabilities for Large Language Models (LLMs). It allows AI agents to store and retrieve information across sessions, enhancing their ability to maintain context and remember important information.
+`alexyangjie/mem0-mcp` is a Model Context Protocol (MCP) server that integrates with [Mem0.ai](https://mem0.ai/) to provide persistent memory capabilities for Large Language Models (LLMs). It allows AI agents to store and retrieve information across sessions, enhancing their ability to maintain context and remember important information.
 
 ## Purpose
 
@@ -98,11 +98,11 @@ mem0-mcp/
 The server can be installed and used in two main ways:
 
 1. **Using `npx` (Recommended for quick use)**
-   * Install globally: `npm install -g @pinkpixel/mem0-mcp`
+  * Install globally: `npm install -g alexyangjie/mem0-mcp`
    * Configure MCP client to run the server using `npx`
 
 2. **Running from Cloned Repository**
-   * Clone the repository: `git clone https://github.com/pinkpixel-dev/mem0-mcp`
+  * Clone the repository: `git clone https://github.com/alexyangjie/mem0-mcp`
    * Install dependencies: `npm install`
    * Build the server: `npm run build`
    * Configure MCP client to run the built script directly using `node`
@@ -124,7 +124,7 @@ Example configuration for cloud storage mode:
       "command": "npx",
       "args": [
         "-y",
-        "@pinkpixel/mem0-mcp"
+        "alexyangjie/mem0-mcp"
       ],
       "env": {
         "MEM0_API_KEY": "YOUR_MEM0_API_KEY_HERE",
@@ -144,7 +144,7 @@ Example configuration for cloud storage mode:
 
 For development:
 
-1. Clone the repository: `git clone https://github.com/pinkpixel-dev/mem0-mcp`
+1. Clone the repository: `git clone https://github.com/alexyangjie/mem0-mcp`
 2. Install dependencies: `npm install`
 3. Build the server: `npm run build`
 4. For auto-rebuild on file changes: `npm run watch`

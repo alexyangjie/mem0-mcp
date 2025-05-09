@@ -1,7 +1,8 @@
 ![Mem0 Logo](https://res.cloudinary.com/di7ctlowx/image/upload/v1741739911/mem0-logo_dlssjm.svg)
 
 
-# @pinkpixel/mem0-mcp MCP Server ✨
+# alexyangjie/mem0-mcp MCP Server ✨
+*This project is a fork of [@pinkpixel/mem0-mcp](https://github.com/pinkpixel-dev/mem0-mcp) by Pink Pixel.*
 
 A Model Context Protocol (MCP) server that integrates with [Mem0.ai](https://mem0.ai/) to provide persistent memory capabilities for LLMs. It allows AI agents to store and retrieve information across sessions.
 
@@ -44,7 +45,7 @@ You can run this server in two main ways:
 Install the package globally using npm:
 
 ```bash
-npm install -g @pinkpixel/mem0-mcp
+npm install -g alexyangjie/mem0-mcp
 ```
 
 Configure your MCP client (e.g., Claude Desktop, Cursor, Cline, Roo Code, etc.) to run the server using `npx`:
@@ -58,7 +59,7 @@ Configure your MCP client (e.g., Claude Desktop, Cursor, Cline, Roo Code, etc.) 
       "command": "npx",
       "args": [
         "-y",
-        "@pinkpixel/mem0-mcp"
+        "alexyangjie/mem0-mcp"
       ],
       "env": {
         "MEM0_API_KEY": "YOUR_MEM0_API_KEY_HERE",
@@ -85,7 +86,7 @@ Configure your MCP client (e.g., Claude Desktop, Cursor, Cline, Roo Code, etc.) 
       "command": "npx",
       "args": [
         "-y",
-        "@pinkpixel/mem0-mcp"
+        "alexyangjie/mem0-mcp"
       ],
       "env": {
         "OPENAI_API_KEY": "YOUR_OPENAI_API_KEY_HERE",
@@ -110,7 +111,7 @@ Configure your MCP client (e.g., Claude Desktop, Cursor, Cline, Roo Code, etc.) 
 Clone the repository, install dependencies, and build the server:
 
 ```bash
-git clone https://github.com/pinkpixel-dev/mem0-mcp 
+git clone https://github.com/alexyangjie/mem0-mcp 
 cd mem0-mcp
 npm install
 npm run build
@@ -163,7 +164,7 @@ Example configuration using `DEFAULT_USER_ID`:
       "command": "npx",
       "args": [
         "-y",
-        "@pinkpixel/mem0-mcp"
+        "alexyangjie/mem0-mcp"
       ],
       "env": {
         "MEM0_API_KEY": "YOUR_MEM0_API_KEY_HERE",
@@ -177,7 +178,7 @@ Example configuration using `DEFAULT_USER_ID`:
 Or when running directly with `node`:
 
 ```bash
-git clone https://github.com/pinkpixel-dev/mem0-mcp 
+git clone https://github.com/alexyangjie/mem0-mcp 
 cd mem0-mcp
 npm install
 npm run build
@@ -223,7 +224,7 @@ npm run build
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/pinkpixel-dev/mem0-mcp 
+git clone https://github.com/alexyangjie/mem0-mcp 
 cd mem0-mcp
 npm install
 ```
