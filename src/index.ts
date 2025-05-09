@@ -174,11 +174,12 @@ class Mem0MCPServer {
 
       try {
         // Configure embedder using OpenAI
+        const embeddingsModel = process.env.EMBEDDING_MODEL || "text-embedding-3-large";
         const embedderConfig = {
           provider: "openai",
           config: {
             apiKey: openaiApiKey!,
-            model: process.env.EMBEDDING_MODEL || "text-embedding-3-large"
+            model: embeddingsModel
           }
         };
 
@@ -194,8 +195,7 @@ class Mem0MCPServer {
           }
           const port = parseInt(portStr, 10);
           const collectionName = process.env.VECTOR_DB_COLLECTION_NAME || "memories";
-          // Default embedding dimensions for the OpenAI text-embedding-3-large model
-          const embeddingModelDims = 1536;
+          const embeddingModelDims = embeddingsModel === 'text-embedding-3-large' ? 3072 : 1536;
           vectorStoreConfig = {
             provider: "qdrant",
             config: { collectionName, embeddingModelDims, host, port }
