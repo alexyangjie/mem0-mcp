@@ -175,6 +175,8 @@ class Mem0MCPServer {
       try {
         // Configure embedder using OpenAI
         const embeddingsModel = process.env.EMBEDDING_MODEL || "text-embedding-3-large";
+        const embeddingModelDimsStr = process.env.EMBEDDING_MODEL_DIMS || "1536";
+        const embeddingModelDims = parseInt(embeddingModelDimsStr, 10);
         const embedderConfig = {
           provider: "openai",
           config: {
@@ -195,19 +197,19 @@ class Mem0MCPServer {
           }
           const port = parseInt(portStr, 10);
           const collectionName = process.env.VECTOR_DB_COLLECTION_NAME || "memories";
-          const embeddingModelDims = embeddingsModel === 'text-embedding-3-large' ? 3072 : 1536;
+          const apiKey = process.env.VECTOR_DB_API_KEY || undefined;
           vectorStoreConfig = {
             provider: "qdrant",
-            config: { collectionName, embeddingModelDims, host, port }
+            config: { collectionName, embeddingModelDims, host, port, apiKey }
           };
-          console.error("Using Qdrant vector store", { host, port, collectionName, embeddingModelDims });
+          console.info("Using Qdrant vector store", { host, port, collectionName, embeddingModelDims });
         } else {
           const collectionName = process.env.VECTOR_DB_COLLECTION_NAME || "mem0_default_collection";
           vectorStoreConfig = {
             provider: "memory",
             config: { collectionName }
           };
-          console.error("Using in-memory vector store", { collectionName });
+          console.info("Using in-memory vector store", { collectionName });
         }
 
         this.localClient = new Memory({
