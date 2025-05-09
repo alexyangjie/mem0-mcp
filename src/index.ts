@@ -114,9 +114,9 @@ class Mem0MCPServer {
     // Initialize MCP Server
     this.server = new Server(
       {
-        // These should match package.json
-        name: "@pinkpixel/mem0-mcp",
-        version: "0.3.2",
+        // Updated to fork's name and version
+        name: "alexyangjie/mem0-mcp",
+        version: "0.3.3",
       },
       {
         capabilities: {

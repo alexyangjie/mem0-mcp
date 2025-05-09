@@ -199,7 +199,7 @@ generate_config() {
         COMMAND="npx"
         ARGS="[
         \"-y\",
-        \"@pinkpixel/mem0-mcp\"
+        \"alexyangjie/mem0-mcp\"
       ]"
     fi
     
@@ -288,7 +288,7 @@ restart_mem0_mcp() {
     # Ask how to start the server
     echo -e "\n${CYAN}${BOLD}How would you like to start Mem0-MCP?${RESET}"
     echo -e "1. ${BOLD}Use local build${RESET} (node build/index.js)"
-    echo -e "2. ${BOLD}Use npm package${RESET} (npx -y @pinkpixel/mem0-mcp)"
+    echo -e "2. ${BOLD}Use npm package${RESET} (npx -y alexyangjie/mem0-mcp)"
     echo -ne "\n${CYAN}Choose an option (1-2):${RESET} "
     read start_method
     echo
@@ -344,7 +344,7 @@ restart_mem0_mcp() {
         echo -e "${GREEN}Starting Mem0-MCP from npm package...${RESET}"
         
         # Build the command with environment variables
-        cmd="npx -y @pinkpixel/mem0-mcp"
+        cmd="npx -y alexyangjie/mem0-mcp"
         
         if [ -n "$MEM0_API_KEY" ]; then
             cmd="MEM0_API_KEY=$MEM0_API_KEY $cmd"
