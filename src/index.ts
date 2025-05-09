@@ -202,14 +202,12 @@ class Mem0MCPServer {
             provider: "qdrant",
             config: { collectionName, embeddingModelDims, host, port, apiKey }
           };
-          console.info("Using Qdrant vector store", { host, port, collectionName, embeddingModelDims });
         } else {
           const collectionName = process.env.VECTOR_DB_COLLECTION_NAME || "mem0_default_collection";
           vectorStoreConfig = {
             provider: "memory",
             config: { collectionName }
           };
-          console.info("Using in-memory vector store", { collectionName });
         }
 
         this.localClient = new Memory({
