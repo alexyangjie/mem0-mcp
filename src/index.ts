@@ -175,7 +175,7 @@ class Mem0MCPServer {
       try {
         // Configure embedder using OpenAI
         const embeddingsModel = process.env.EMBEDDING_MODEL || "text-embedding-3-large";
-        const embeddingModelDimsStr = process.env.EMBEDDING_MODEL_DIMS || "1536";
+        const embeddingModelDimsStr = process.env.EMBEDDING_MODEL_DIMS || "3072";
         const embeddingModelDims = parseInt(embeddingModelDimsStr, 10);
         const embedderConfig = {
           provider: "openai",
