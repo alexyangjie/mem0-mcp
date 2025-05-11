@@ -103,7 +103,7 @@ class Mem0MCPServer {
   private isReady: boolean = false;
 
   constructor() {
-    console.error("Initializing Mem0 MCP Server...");
+    console.info("Initializing Mem0 MCP Server...");
 
     // Check for Mem0 API key first (for cloud mode)
     const mem0ApiKey = process.env.MEM0_API_KEY;
@@ -130,7 +130,7 @@ class Mem0MCPServer {
 
     // Determine the mode based on available keys
     if (mem0ApiKey) {
-      console.error("Using Mem0 cloud storage mode with MEM0_API_KEY");
+      console.info("Using Mem0 cloud storage mode with MEM0_API_KEY");
       this.isCloudMode = true;
 
       // Dynamic import for cloud client
@@ -155,7 +155,7 @@ class Mem0MCPServer {
           if (projectId) clientOptions.project_id = projectId;
 
           this.cloudClient = new MemoryClient(clientOptions);
-          console.error("Cloud client initialized successfully with options:", {
+          console.info("Cloud client initialized successfully with options:", {
             hasApiKey: !!mem0ApiKey,
             hasOrgId: !!orgId,
             hasProjectId: !!projectId
@@ -169,7 +169,7 @@ class Mem0MCPServer {
         process.exit(1);
       });
     } else if (openaiApiKey) {
-      console.error("Using local in-memory storage mode with OPENAI_API_KEY");
+      console.info("Using local in-memory storage mode with OPENAI_API_KEY");
       this.isCloudMode = false;
 
       try {
@@ -212,7 +212,7 @@ class Mem0MCPServer {
           embedder: embedderConfig,
           vectorStore: vectorStoreConfig
         });
-        console.error("Local client initialized successfully with custom configuration");
+        console.info("Local client initialized successfully with custom configuration");
         this.isReady = true;
       } catch (error: any) {
         console.error("Error initializing local client:", error);
@@ -224,7 +224,7 @@ class Mem0MCPServer {
     }
 
     process.on('SIGINT', async () => {
-      console.error("Received SIGINT signal, shutting down...");
+      console.info("Received SIGINT signal, shutting down...");
       // Restore original console.log before exit
       safeLogger.restore();
       await this.server.close();
@@ -232,7 +232,7 @@ class Mem0MCPServer {
     });
 
     process.on('SIGTERM', async () => {
-      console.error("Received SIGTERM signal, shutting down...");
+      console.info("Received SIGTERM signal, shutting down...");
       // Restore original console.log before exit
       safeLogger.restore();
       await this.server.close();
@@ -393,7 +393,7 @@ class Mem0MCPServer {
       throw new McpError(ErrorCode.InvalidParams, "Missing required argument: userId");
     }
 
-    console.error(`Queueing memory addition for user ${userId}`);
+    console.info(`Queueing memory addition for user ${userId}`);
 
     // Prepare message payload for embedding/storage
     const messages: Mem0Message[] = [{ role: "user", content }];
@@ -416,7 +416,7 @@ class Mem0MCPServer {
       void (async () => {
         try {
           await cloudClient.add(messages, options);
-          console.error("Memory added asynchronously (cloud)");
+          console.info("Memory added asynchronously (cloud)");
         } catch (err: any) {
           console.error("Async error adding memory (cloud):", err);
         }
@@ -429,7 +429,7 @@ class Mem0MCPServer {
       void (async () => {
         try {
           await localClient.add(messages, options);
-          console.error("Memory added asynchronously (local)");
+        console.info("Memory added asynchronously (local)");
         } catch (err: any) {
           console.error("Async error adding memory (local):", err);
         }
@@ -458,8 +458,6 @@ class Mem0MCPServer {
     if (!userId) {
       throw new McpError(ErrorCode.InvalidParams, "Missing required argument: userId");
     }
-
-    console.error(`Searching memories for query "${query}" and user ${userId}`);
 
     if (this.isCloudMode && this.cloudClient) {
       try {
@@ -494,7 +492,7 @@ class Mem0MCPServer {
 
         // Handle potential array or object result
         const resultsArray = Array.isArray(results) ? results : [results];
-        console.error(`Found ${resultsArray.length} memories using cloud API`);
+        console.info(`Found ${resultsArray.length} memories using cloud API`);
 
         return {
           content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
@@ -517,7 +515,7 @@ class Mem0MCPServer {
 
         // Handle potential array or object result
         const resultsArray = Array.isArray(results) ? results : [results];
-        console.error(`Found ${resultsArray.length} memories using local storage`);
+        console.info(`Found ${resultsArray.length} memories using local storage`);
 
         return {
           content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
@@ -545,7 +543,7 @@ class Mem0MCPServer {
       throw new McpError(ErrorCode.InvalidParams, "Missing required argument: userId");
     }
 
-    console.error(`Attempting to delete memory with ID ${memoryId} for user ${userId}`);
+    console.info(`Attempting to delete memory with ID ${memoryId} for user ${userId}`);
 
     if (this.isCloudMode && this.cloudClient) {
       try {
@@ -570,10 +568,10 @@ class Mem0MCPServer {
         try {
           // @ts-ignore - We'll try to access this method even if TypeScript doesn't recognize it
           await this.cloudClient.deleteMemory(memoryId);
-          console.error(`Memory ${memoryId} deleted successfully using cloud API's deleteMemory`);
+          console.info(`Memory ${memoryId} deleted successfully using cloud API's deleteMemory`);
         } catch (innerError) {
           // If that fails, try to use a generic request method
-          console.error("Using fallback delete method for cloud API");
+          console.info("Using fallback delete method for cloud API");
           await fetch(`https://api.mem0.ai/v2/memories/${memoryId}`, {
             method: 'DELETE',
             headers: {
@@ -582,7 +580,7 @@ class Mem0MCPServer {
             },
             body: JSON.stringify(options)
           });
-          console.error(`Memory ${memoryId} deleted successfully using direct API request`);
+          console.info(`Memory ${memoryId} deleted successfully using direct API request`);
         }
 
         return {
@@ -600,16 +598,16 @@ class Mem0MCPServer {
         try {
           // @ts-ignore - We'll try to access this method even if TypeScript doesn't recognize it
           await this.localClient.deleteMemory(memoryId);
-          console.error(`Memory ${memoryId} deleted successfully using local storage deleteMemory`);
+          console.info(`Memory ${memoryId} deleted successfully using local storage deleteMemory`);
         } catch (innerError) {
           // If direct method fails, try to access through any internal methods
-          console.error("Using fallback delete method for local storage");
+          console.info("Using fallback delete method for local storage");
 
           // @ts-ignore - Accessing potentially private properties
           if (this.localClient._vectorstore && typeof this.localClient._vectorstore.delete === 'function') {
             // @ts-ignore
             await this.localClient._vectorstore.delete({ ids: [memoryId] });
-            console.error(`Memory ${memoryId} deleted successfully using vectorstore delete`);
+            console.info(`Memory ${memoryId} deleted successfully using vectorstore delete`);
           } else {
             throw new Error("Local client does not support memory deletion");
           }
@@ -631,10 +629,10 @@ class Mem0MCPServer {
    * Starts the MCP server.
    */
   public async start(): Promise<void> {
-    console.error("Starting Mem0 MCP Server...");
+    console.info("Starting Mem0 MCP Server...");
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    console.error("Mem0 MCP Server is running.");
+    console.info("Mem0 MCP Server is running.");
   }
 }
 
