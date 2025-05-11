@@ -393,75 +393,56 @@ class Mem0MCPServer {
       throw new McpError(ErrorCode.InvalidParams, "Missing required argument: userId");
     }
 
-    console.error(`Adding memory for user ${userId}`);
+    console.error(`Queueing memory addition for user ${userId}`);
+
+    // Prepare message payload for embedding/storage
+    const messages: Mem0Message[] = [{ role: "user", content }];
 
     if (this.isCloudMode && this.cloudClient) {
-      try {
-        // Get organization and project IDs
-        const orgId = process.env.YOUR_ORG_ID || process.env.ORG_ID;
-        const projectId = process.env.YOUR_PROJECT_ID || process.env.PROJECT_ID;
+      const cloudClient = this.cloudClient;
+      const orgId = process.env.YOUR_ORG_ID || process.env.ORG_ID;
+      const projectId = process.env.YOUR_PROJECT_ID || process.env.PROJECT_ID;
+      const options: any = {
+        user_id: userId,
+        version: "v2"
+      };
+      if (orgId) options.org_id = orgId;
+      if (projectId) options.project_id = projectId;
+      if (sessionId) options.run_id = sessionId;
+      if (agentId) options.agent_id = agentId;
+      if (metadata) options.metadata = metadata;
 
-        // Format message for the cloud API
-        const messages: Mem0Message[] = [{
-          role: "user",
-          content
-        }];
+      // Fire-and-forget: perform embedding and storage asynchronously
+      void (async () => {
+        try {
+          await cloudClient.add(messages, options);
+          console.error("Memory added asynchronously (cloud)");
+        } catch (err: any) {
+          console.error("Async error adding memory (cloud):", err);
+        }
+      })();
 
-        // Cloud API options - using snake_case
-        const options: any = {
-          user_id: userId,
-          version: "v2"
-        };
-
-        // Add organization and project IDs if available
-        if (orgId) options.org_id = orgId;
-        if (projectId) options.project_id = projectId;
-
-        if (sessionId) options.run_id = sessionId;
-        if (agentId) options.agent_id = agentId;
-        if (metadata) options.metadata = metadata;
-
-        // API call
-        const result = await this.cloudClient.add(messages, options);
-        console.error("Memory added successfully using cloud API");
-
-        return {
-          content: [{ type: "text", text: `Memory added successfully` }],
-        };
-      } catch (error: any) {
-        console.error("Error adding memory using cloud API:", error);
-        throw new McpError(ErrorCode.InternalError, `Error adding memory: ${error.message}`);
-      }
     } else if (this.localClient) {
-      try {
-        // Format message for the local storage API
-        const messages: Mem0Message[] = [{
-          role: "user",
-          content
-        }];
+      const localClient = this.localClient;
+      const options: any = { userId, sessionId, metadata };
 
-        // Local storage options - using camelCase
-        const options: any = {
-          userId,
-          sessionId,
-          metadata
-        };
+      void (async () => {
+        try {
+          await localClient.add(messages, options);
+          console.error("Memory added asynchronously (local)");
+        } catch (err: any) {
+          console.error("Async error adding memory (local):", err);
+        }
+      })();
 
-        // API call
-        const result = await this.localClient.add(messages, options);
-
-        console.error("Memory added successfully using local storage");
-
-        return {
-          content: [{ type: "text", text: `Memory added successfully` }],
-        };
-      } catch (error: any) {
-        console.error("Error adding memory using local storage:", error);
-        throw new McpError(ErrorCode.InternalError, `Error adding memory: ${error.message}`);
-      }
     } else {
       throw new McpError(ErrorCode.InternalError, "No memory client is available");
     }
+
+    // Immediate response to MCP caller
+    return {
+      content: [{ type: "text", text: `Memory addition queued successfully` }],
+    };
   }
 
   /**
