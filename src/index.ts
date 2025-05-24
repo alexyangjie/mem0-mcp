@@ -454,7 +454,7 @@ class Mem0MCPServer {
    * Handles searching memories using either local or cloud client.
    */
   private async handleSearchMemory(args: Mem0SearchToolArgs): Promise<any> {
-    const { query, userId, sessionId, agentId, filters, threshold, limit } = args;
+    const { query, userId, sessionId, agentId, filters, threshold, limit = 20 } = args;
 
     if (!query) {
       throw new McpError(ErrorCode.InvalidParams, "Missing required argument: query");
