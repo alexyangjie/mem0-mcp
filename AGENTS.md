@@ -55,7 +55,7 @@
  
  ## MCP Tools
  - **add_memory**: Store a memory (content, userId, [sessionId], [agentId], [metadata])
- - **search_memory**: Retrieve memories (query, userId, [sessionId], [agentId], [filters], [threshold])
+- **search_memory**: Retrieve memories (query, userId, [sessionId], [agentId], [filters], [threshold], [limit])
  - **delete_memory**: Remove memory (memoryId, userId, [agentId])
  
  ## Storage Modes

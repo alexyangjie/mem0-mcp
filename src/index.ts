@@ -81,6 +81,7 @@ interface Mem0SearchToolArgs {
   agentId?: string;
   filters?: any;
   threshold?: number;
+  limit?: number;
 }
 
 interface Mem0DeleteToolArgs {
@@ -316,6 +317,10 @@ class Mem0MCPServer {
                   type: "number",
                   description: "Optional similarity threshold for results (for cloud API).",
                 },
+                limit: {
+                  type: "integer",
+                  description: "Optional number of top results to return (overrides default search limit).",
+                },
               },
               required: ["query", "userId"],
             },
@@ -449,7 +454,7 @@ class Mem0MCPServer {
    * Handles searching memories using either local or cloud client.
    */
   private async handleSearchMemory(args: Mem0SearchToolArgs): Promise<any> {
-    const { query, userId, sessionId, agentId, filters, threshold } = args;
+    const { query, userId, sessionId, agentId, filters, threshold, limit } = args;
 
     if (!query) {
       throw new McpError(ErrorCode.InvalidParams, "Missing required argument: query");
@@ -511,6 +516,9 @@ class Mem0MCPServer {
           options.threshold = threshold;
         } else {
           options.threshold = 0.3;
+        }
+        if (limit !== undefined && limit !== null) {
+          options.limit = limit;
         }
 
         // API call
