@@ -366,6 +366,12 @@ The server recognizes several environment variables that control its behavior:
 - `MEM0_API_KEY`: API key for cloud storage mode
 - `OPENAI_API_KEY`: API key for local storage mode (embeddings)
 - `DEFAULT_USER_ID`: Default user ID for memory operations
+- `EMBEDDING_MODEL`: OpenAI embedding model name for local mode (default: `text-embedding-3-large`)
+- `EMBEDDING_MODEL_DIMS`: Dimension of the embedding model output (default: `3072`)
+- `VECTOR_DB_PROVIDER`: Local vector store provider (`qdrant` or `memory`; default: `memory`)
+- `VECTOR_DB_URL`: URL of the Qdrant server (required when `VECTOR_DB_PROVIDER=qdrant`)
+- `VECTOR_DB_COLLECTION_NAME`: Name of the vector store collection (default: `memories` for Qdrant, `mem0_default_collection` for in-memory)
+- `VECTOR_DB_API_KEY`: API key for Qdrant if authentication is required
 
 ---
 
