@@ -503,12 +503,13 @@ class Mem0MCPServer {
       }
     } else if (this.localClient) {
       try {
-        // Local storage options
-        const options: any = {
-          userId,
-          sessionId,
-          filters
-        };
+        // Local storage options (apply threshold filtering similar to cloud mode)
+        const options: any = { userId, sessionId, filters };
+        if (threshold !== undefined && threshold !== null) {
+          options.threshold = threshold;
+        } else {
+          options.threshold = 0.3;
+        }
 
         // API call
         const results = await this.localClient.search(query, options);

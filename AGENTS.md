@@ -1,6 +1,8 @@
- # Codex Reference: alexyangjie/mem0-mcp
- 
- **Project**: alexyangjie/mem0-mcp
+# Codex Reference: alexyangjie/mem0-mcp
+
+> **Note**: This is a living document. Please update it whenever you find new information that could be useful in your future coding sessions.
+
+**Project**: alexyangjie/mem0-mcp
  **Version**: 0.3.3
  **Description**: A Model Context Protocol (MCP) server providing persistent memory for LLMs via Mem0.ai and optional local storage.
  
