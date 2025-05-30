@@ -291,33 +291,24 @@ class Mem0MCPServer {
             name: "add_memories",
             description: "Stores multiple pieces of text as memories in Mem0. Useful if you want to save multiple observations for the user.",
             inputSchema: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  content: {
-                    type: "string",
-                    description: "The text content to store as memory.",
-                  },
-                  userId: {
-                    type: "string",
-                    description: "User ID to associate with the memory.",
-                  },
-                  sessionId: {
-                    type: "string",
-                    description: "Optional session ID to associate with the memory.",
-                  },
-                  agentId: {
-                    type: "string",
-                    description: "Optional agent ID to associate with the memory (for cloud API).",
-                  },
-                  metadata: {
+              type: "object",
+              properties: {
+                memories: {
+                  type: "array",
+                  items: {
                     type: "object",
-                    description: "Optional key-value metadata.",
+                    properties: {
+                      content: { type: "string", description: "The text content to store as memory." },
+                      userId: { type: "string", description: "User ID to associate with the memory." },
+                      sessionId: { type: "string", description: "Optional session ID to associate with the memory." },
+                      agentId: { type: "string", description: "Optional agent ID to associate with the memory (for cloud API)." },
+                      metadata: { type: "object", description: "Optional key-value metadata." },
+                    },
+                    required: ["content", "userId"],
                   },
                 },
-                required: ["content", "userId"],
               },
+              required: ["memories"],
             },
           },
           {
@@ -398,8 +389,11 @@ class Mem0MCPServer {
           const toolArgs = args as unknown as Mem0AddToolArgs;
           return await this.handleAddMemory(toolArgs);
         } else if (name === "add_memories") {
-          const toolArgs = args as unknown as Mem0AddToolArgs[];
-          return await this.handleAddMemories(toolArgs);
+          const { memories } = args as unknown as { memories?: Mem0AddToolArgs[] };
+          if (!Array.isArray(memories)) {
+            throw new McpError(ErrorCode.InvalidParams, "Invalid argument: expected property 'memories' to be an array of memories");
+          }
+          return await this.handleAddMemories(memories);
         } else if (name === "search_memory") {
           const toolArgs = args as unknown as Mem0SearchToolArgs;
           return await this.handleSearchMemory(toolArgs);
