@@ -259,7 +259,7 @@ class Mem0MCPServer {
         tools: [
           {
             name: "add_memory",
-            description: "Stores a piece of text as a memory in Mem0.",
+            description: "Stores a piece of text as a memory in Mem0. Useful for adding single observation for the user.",
             inputSchema: {
               type: "object",
               properties: {
@@ -285,6 +285,39 @@ class Mem0MCPServer {
                 },
               },
               required: ["content", "userId"],
+            },
+          },
+          {
+            name: "add_memories",
+            description: "Stores multiple pieces of text as memories in Mem0. Useful if you want to save multiple observations for the user.",
+            inputSchema: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  content: {
+                    type: "string",
+                    description: "The text content to store as memory.",
+                  },
+                  userId: {
+                    type: "string",
+                    description: "User ID to associate with the memory.",
+                  },
+                  sessionId: {
+                    type: "string",
+                    description: "Optional session ID to associate with the memory.",
+                  },
+                  agentId: {
+                    type: "string",
+                    description: "Optional agent ID to associate with the memory (for cloud API).",
+                  },
+                  metadata: {
+                    type: "object",
+                    description: "Optional key-value metadata.",
+                  },
+                },
+                required: ["content", "userId"],
+              },
             },
           },
           {
@@ -364,6 +397,9 @@ class Mem0MCPServer {
         if (name === "add_memory") {
           const toolArgs = args as unknown as Mem0AddToolArgs;
           return await this.handleAddMemory(toolArgs);
+        } else if (name === "add_memories") {
+          const toolArgs = args as unknown as Mem0AddToolArgs[];
+          return await this.handleAddMemories(toolArgs);
         } else if (name === "search_memory") {
           const toolArgs = args as unknown as Mem0SearchToolArgs;
           return await this.handleSearchMemory(toolArgs);
@@ -447,6 +483,24 @@ class Mem0MCPServer {
     // Immediate response to MCP caller
     return {
       content: [{ type: "text", text: `Memory addition queued successfully` }],
+    };
+  }
+
+  /**
+   * Handles adding multiple memories using either local or cloud client.
+   */
+  private async handleAddMemories(args: Mem0AddToolArgs[]): Promise<any> {
+    if (!Array.isArray(args)) {
+      throw new McpError(ErrorCode.InvalidParams, "Invalid argument: expected an array of memories");
+    }
+    if (args.length === 0) {
+      throw new McpError(ErrorCode.InvalidParams, "No memories provided");
+    }
+    for (const item of args) {
+      await this.handleAddMemory(item);
+    }
+    return {
+      content: [{ type: "text", text: `${args.length} memories queued successfully` }],
     };
   }
 
